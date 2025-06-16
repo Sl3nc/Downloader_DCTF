@@ -1,3 +1,4 @@
+from kivy.uix.rst import nodeclass
 from kivy.uix.actionbar import Button
 from kivy.uix.vkeyboard import Canvas
 from kivy.uix.gesturesurface import Line
@@ -17,23 +18,21 @@ class Downloader(BoxLayout):
         self.orientation = 'vertical'
 
         self.add_widget(Label(
-            text='Para baixar automaticamente seus recibos da DCTF WEB;'
+            text='Para baixar automaticamente seus recibos da DCTF WEB;\n'\
+            'Siga as seguintes instrunções:',
+            valign='top',
+            halign='center'
         ))
 
-        header_title = GridLayout(cols=3)
-        header_title.add_widget(Label(text='Siga as seguintes instrunções:'))
 
-        self.add_widget(header_title)
-
-        btns_box = BoxLayout()
-
+        btns_box = BoxLayout(padding=20)
         btns_box.add_widget(Button(text='Enviar'))
 
         btns_utils_box = BoxLayout(orientation='vertical')
         btns_utils_box.add_widget(Button(text='Voltar'))
         btns_utils_box.add_widget(Button(text='Pular'))
-        btns_box.add_widget(btns_utils_box)
 
+        btns_box.add_widget(btns_utils_box)
         self.add_widget(btns_box)
 
 class DownloaderApp(App):
