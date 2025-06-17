@@ -5,11 +5,15 @@
         text: 'Para baixar automaticamente seus recibos da DCTF WEB;\nSiga as seguintes instrunções:'
         halign: 'center'
 
+    Label:
+        text: 'Instrunção'
+
     BoxLayout:
         spacing: 20
         padding: 20
         Button:
             text: 'Iniciar'
+            on_press: root.send()
 
         BoxLayout:
             spacing: 10
