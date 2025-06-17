@@ -6,6 +6,7 @@
         halign: 'center'
 
     Label:
+        id: instruction_label
         text: 'Instrunção'
 
     BoxLayout:
@@ -20,6 +21,8 @@
             orientation: 'vertical'
             Button:
                 text: 'Voltar'
+                on_press: root.send(1)
 
             Button:
                 text: 'Pular'
+                on_press: root.send(2)

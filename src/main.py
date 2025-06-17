@@ -6,6 +6,7 @@ Builder.load_file('window.kv')
 
 class Step:
     value = 0
+    max_value = 0
     message_index = 0
     func_index = 1
     browser = ...
@@ -19,8 +20,7 @@ class Step:
         pass
 
     def next(self) -> str:
-        self.value = self.value + 1
-        if self.value == len(self.instructions): self.value = 0
+        if self.value != len(self.instructions) - 1: self.value = self.value + 1
         data = self.instructions[self.value]
 
         func  = data[self.func_index]
@@ -29,7 +29,7 @@ class Step:
         return data[self.message_index]
 
     def back(self) -> str:
-        self.value = self.value - 1
+        if self.value != 0: self.value = self.value - 1
         return self.instructions[self.value][self.message_index]
 
     def jump(self) -> str:
@@ -51,7 +51,7 @@ class Downloader(BoxLayout):
     #Executado pelo enviar / prosseguir
     def send(self, value = 0):
         result = self.ref[value]
-        print(result())
+        self.ids.instruction_label.text = result()
         
         #Receber texto do botão também
         #Define o result como valor da instrunção
