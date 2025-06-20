@@ -2,20 +2,22 @@ from PySide6.QtWidgets import (
     QMainWindow, QApplication, QCheckBox, QTreeWidgetItem, QPushButton, QHBoxLayout, QFrame, QSizePolicy
 )
 from PySide6.QtGui import QPixmap, QIcon, QMovie
-from tkinter.filedialog import asksaveasfilename
+from tkinter.filedialog import askdirectory
 from tkinter.messagebox import showwarning, showinfo
 from window_downloader_dctf import Ui_MainWindow
 from PySide6.QtCore import QThread, QSize
 from step import Step
 from worker import Worker
-from os import open
+from os import startfile
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
     Classe principal da interface gráfica do sistema, responsável por interagir com o usuário e orquestrar as operações.
     """
     step = Step()
-    worker = Worker()
+    worker = None
+    complete_msg = 'Todos arquivos DCTF WEB foram baixados com êxito, a pasta que destinou o download será aberta após o "ok"'
+
     def __init__(self, parent = None) -> None:
         """
         Inicializa a janela principal e conecta os sinais aos slots.
@@ -33,9 +35,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_back.clicked.connect(lambda: self.send(1))
         self.pushButton_jump.clicked.connect(lambda: self.send(2))
         
-        label, instruction = self.step()
-        self.label_instruction.setText(instruction)
-        self.pushButton_execute.setText(label)
+        self.reset()
 
     def send(self, value = 0):
         func = self.ref[value]
@@ -47,13 +47,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if value == 0 and self.step.is_execution_time() == True:
             self.execute()
 
-    def reset(self):...
+    def reset(self, was_started= False):
+        if was_started ==  True:
+            self.worker = None
+            self.load_progress()
+
+        label, instruction = self.step()
+        self.label_instruction.setText(instruction)
+        self.pushButton_execute.setText(label)
 
     def execute(self):
         try:
             if self.worker == None:
                 path = self.request_path()
                 self.open(path)
+                
+                self.send()
+                self.pushButton_execute.setDisabled(False)
             else:
                 self.worker.confirm()
         except Exception as err:
@@ -61,14 +71,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def request_path(self):
         self.pushButton_execute.setDisabled(True)
-        path = asksaveasfilename()
+        path = askdirectory()
         if path == '':
             self.reset()
             self.pushButton_execute.setDisabled(False)
             raise Exception('Operação cancelada')
         
-        self.send()
-        self.pushButton_execute.setDisabled(False)
         return path
 
     def open(self, path):
@@ -79,12 +87,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.worker.moveToThread(self._thread)
         self._thread.started.connect(self.worker.execute)
-        self.worker.fim.connect(self.conclusion)
-        self.worker.fim.connect(self._thread.quit)
-        self.worker.fim.connect(self._thread.deleteLater)
-        self.worker.error.connect(self.load_progress)
+        self.worker.end.connect(self._thread.quit)
+        self.worker.end.connect(self._thread.deleteLater)
+        self.worker.start.connect(self.load_progress)
+        self.worker.error.connect(self.error)
+        self.worker.conclusion.connect(self.conclusion)
         self.worker.progress_bar.connect(self.to_progress)
-        self._thread.finished.connect(self.worker.deleteLater)
+        # self._thread.finished.connect(self.worker.deleteLater)
         self._thread.start()
     
     def to_progress(self, value):
@@ -94,21 +103,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.progressBar.setValue(value)
 
     def conclusion(self, path):
-        self.worker = None
-        self.load_progress(False)
-        showinfo(title='Aviso', message= f'Todos arquivos DCTF WEB foram baixados com êxito, a pasta que destinou o download será aberta após o "ok"')
-        open(path)
+        self.reset(True)
+        showinfo(title='Aviso', message= self.complete_msg)
+        startfile(path)
+
+    def error(self, message):
+        self.reset(True)
+        showwarning(title='Aviso', message= message)
 
     def load_progress(self):
         """
         Controla a exibição do carregamento geral.
         """
-        if self.stackedWidget.currentIndex() == 0:
-            self.movie.start()
-            self.stackedWidget_body.setCurrentIndex(1)
-        else:
-            self.movie.stop()
-            self.stackedWidget_body.setCurrentIndex(0)
+        value = 1 if self.stackedWidget.currentIndex() == 0 else 0
+        self.stackedWidget.setCurrentIndex(value)
 
 if __name__ == '__main__':
     # Inicializa a aplicação Qt.

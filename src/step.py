@@ -4,7 +4,6 @@ class Step:
     message_index = 'message'
     func_index = 'func'
     label_index = 'label'
-    browser = ...
     instructions = [
         {
             'message': 'Primeiramente, clique em "iniciar"', 
@@ -59,4 +58,6 @@ class Step:
         return data[self.label_index], data[self.message_index]
     
     def __call__(self, *args, **kwds):
+        self.value = 0
+        self.max_value = 0
         return self._data(0)

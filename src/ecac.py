@@ -13,7 +13,7 @@ class ECAC:
     Classe responsável por automatizar o acesso ao sistema Acessorias.com para buscar e-mails de contato das empresas.
     """
     ROOT_FOLDER = Path(__file__).parent
-    CHROME_DRIVER_PATH = ROOT_FOLDER / 'src' / 'drivers' / 'chromedriver.exe'
+    CHROME_DRIVER_PATH = ROOT_FOLDER / 'driver' / 'chromedriver.exe'
     ROOT_URL = 'https://cav.receita.fazenda.gov.br/autenticacao/login'
     URL_DETALHES = 'https://app.acessorias.com/sysmain.php?m=105&act=e&i={0}&uP=14&o=EmpNome,EmpID|Asc'
 
@@ -21,7 +21,7 @@ class ECAC:
     INPUT_PASSWORD= 'passAC'
     BTN_ENTRAR = '#site-corpo > section.secao.secao-login > div > form > div.botoes > button'
 
-    def _init_browser(self):
+    def __init__(self):
         self.browser = self.make_chrome_browser()
         self.browser.get(self.ROOT_URL)
 
@@ -50,7 +50,8 @@ class ECAC:
             DriverMaintenance().upgrade()
             return self.make_chrome_browser()
         
-    def hide(self):self.browser.set_window_position(-10000,0)
+    def hide(self):
+        self.browser.set_window_position(-10000,0)
 
     def download_files(self):
         print('Entrou no Download')
