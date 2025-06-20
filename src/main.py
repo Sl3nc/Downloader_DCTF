@@ -7,7 +7,7 @@ from tkinter.messagebox import showwarning, showinfo
 from window_downloader_dctf import Ui_MainWindow
 from PySide6.QtCore import QThread, QSize
 from step import Step
-from ecac import ECAC
+from worker import Worker
 from os import open
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -15,7 +15,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     Classe principal da interface gráfica do sistema, responsável por interagir com o usuário e orquestrar as operações.
     """
     step = Step()
-    ecac = ECAC()
+    worker = Worker()
     def __init__(self, parent = None) -> None:
         """
         Inicializa a janela principal e conecta os sinais aos slots.
@@ -51,11 +51,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def execute(self):
         try:
-            if self.ecac == None:
+            if self.worker == None:
                 path = self.request_path()
                 self.open(path)
             else:
-                self.ecac.confirm()
+                self.worker.confirm()
         except Exception as err:
             showwarning(title='Aviso', message=err)
 
@@ -72,19 +72,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return path
 
     def open(self, path):
-        self.ecac = ECAC(
+        self.worker = Worker(
             path
         )
         self._thread = QThread()
 
-        self.ecac.moveToThread(self._thread)
-        self._thread.started.connect(self.ecac.execute)
-        self.ecac.fim.connect(self.conclusion)
-        self.ecac.fim.connect(self._thread.quit)
-        self.ecac.fim.connect(self._thread.deleteLater)
-        self.ecac.error.connect(self.load_progress)
-        self.ecac.progress_bar.connect(self.to_progress)
-        self._thread.finished.connect(self.ecac.deleteLater)
+        self.worker.moveToThread(self._thread)
+        self._thread.started.connect(self.worker.execute)
+        self.worker.fim.connect(self.conclusion)
+        self.worker.fim.connect(self._thread.quit)
+        self.worker.fim.connect(self._thread.deleteLater)
+        self.worker.error.connect(self.load_progress)
+        self.worker.progress_bar.connect(self.to_progress)
+        self._thread.finished.connect(self.worker.deleteLater)
         self._thread.start()
     
     def to_progress(self, value):
@@ -94,7 +94,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.progressBar.setValue(value)
 
     def conclusion(self, path):
-        self.ecac = None
+        self.worker = None
         self.load_progress(False)
         showinfo(title='Aviso', message= f'Todos arquivos DCTF WEB foram baixados com êxito, a pasta que destinou o download será aberta após o "ok"')
         open(path)
