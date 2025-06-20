@@ -2,16 +2,20 @@ from PySide6.QtWidgets import (
     QMainWindow, QApplication, QCheckBox, QTreeWidgetItem, QPushButton, QHBoxLayout, QFrame, QSizePolicy
 )
 from PySide6.QtGui import QPixmap, QIcon, QMovie
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import asksaveasfilename
+from tkinter.messagebox import showwarning, showinfo
 from window_downloader_dctf import Ui_MainWindow
 from PySide6.QtCore import QThread, QSize
 from step import Step
+from ecac import ECAC
+from os import open
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
     Classe principal da interface gráfica do sistema, responsável por interagir com o usuário e orquestrar as operações.
     """
     step = Step()
+    ecac = ECAC()
     def __init__(self, parent = None) -> None:
         """
         Inicializa a janela principal e conecta os sinais aos slots.
@@ -33,7 +37,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label_instruction.setText(instruction)
         self.pushButton_execute.setText(label)
 
-    #Executado pelo enviar / prosseguir
     def send(self, value = 0):
         func = self.ref[value]
         label, instruction = func()
@@ -41,8 +44,71 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label_instruction.setText(instruction)
         self.pushButton_execute.setText(label)
         
-        #Receber texto do botão também
-        #Define o result como valor da instrunção
+        if value == 0 and self.step.is_execution_time() == True:
+            self.execute()
+
+    def reset(self):...
+
+    def execute(self):
+        try:
+            if self.ecac == None:
+                path = self.request_path()
+                self.open(path)
+            else:
+                self.ecac.confirm()
+        except Exception as err:
+            showwarning(title='Aviso', message=err)
+
+    def request_path(self):
+        self.pushButton_execute.setDisabled(True)
+        path = asksaveasfilename()
+        if path == '':
+            self.reset()
+            self.pushButton_execute.setDisabled(False)
+            raise Exception('Operação cancelada')
+        
+        self.send()
+        self.pushButton_execute.setDisabled(False)
+        return path
+
+    def open(self, path):
+        self.ecac = ECAC(
+            path
+        )
+        self._thread = QThread()
+
+        self.ecac.moveToThread(self._thread)
+        self._thread.started.connect(self.ecac.execute)
+        self.ecac.fim.connect(self.conclusion)
+        self.ecac.fim.connect(self._thread.quit)
+        self.ecac.fim.connect(self._thread.deleteLater)
+        self.ecac.error.connect(self.load_progress)
+        self.ecac.progress_bar.connect(self.to_progress)
+        self._thread.finished.connect(self.ecac.deleteLater)
+        self._thread.start()
+    
+    def to_progress(self, value):
+        """
+        Atualiza o valor da barra de progresso.
+        """
+        self.progressBar.setValue(value)
+
+    def conclusion(self, path):
+        self.ecac = None
+        self.load_progress(False)
+        showinfo(title='Aviso', message= f'Todos arquivos DCTF WEB foram baixados com êxito, a pasta que destinou o download será aberta após o "ok"')
+        open(path)
+
+    def load_progress(self):
+        """
+        Controla a exibição do carregamento geral.
+        """
+        if self.stackedWidget.currentIndex() == 0:
+            self.movie.start()
+            self.stackedWidget_body.setCurrentIndex(1)
+        else:
+            self.movie.stop()
+            self.stackedWidget_body.setCurrentIndex(0)
 
 if __name__ == '__main__':
     # Inicializa a aplicação Qt.

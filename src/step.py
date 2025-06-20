@@ -9,19 +9,28 @@ class Step:
         {
             'message': 'Primeiramente, clique em "iniciar"', 
             'label': 'Iniciar',
-            'func': None
+            'func': False
         },
         {
-            'message': 'Um navegador foi aberto na página do ECAC, certo?\nFaça login na conta da Deltaprice (clique em prosseguir quando acabar)', 
+            'message': 'Insira a pasta onde será feito os downloads', 
             'label': 'Prosseguir',
-            #Abre o navegador no passo 1
-            'func': lambda: print('\noi')
+            'func': True
         },
         {
-            'message': 'Agora faça o seguinte', 
+            'message': 'Um navegador foi aberto na página do ECAC, certo?\nFaça login na conta da Deltaprice\n(clique em prosseguir quando acabar)', 
+            'label': 'Prosseguir',
+            'func': False
+        },
+        {
+            'message': 'Tudo pronto!\nAgora que está na tela ideal, clique em "Executar"', 
             'label': 'Executar',
-            'func': None
-        }
+            'func': False
+        },
+        {
+            'message': 'A janela foi minimizada e a operação está ocorrendo, acompanhe seu progresso na barra abaixo', 
+            'label': 'Executar',
+            'func': True
+        },
     ]
 
     def __init__(self):
@@ -29,10 +38,6 @@ class Step:
 
     def next(self) -> str:
         if self.value != len(self.instructions) - 1: self.value = self.value + 1
-
-        func  = self.instructions[self.value][self.func_index]
-        if func != None and self.value > self.max_value: func()
-
         return self._data(self.value)
 
     def back(self) -> str:
@@ -44,6 +49,10 @@ class Step:
     def jump(self) -> str:
         self.value = len(self.instructions) - 1
         return self._data(self.value)
+    
+    def is_execution_time(self):
+        func  = self.instructions[self.value][self.func_index]
+        return True if func == True and self.value > self.max_value else False
 
     def _data(self, value):
         data = self.instructions[value]
