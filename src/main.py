@@ -1,44 +1,52 @@
-from kivy.uix.actionbar import Button
-from kivy.uix.vkeyboard import Canvas
-from kivy.uix.gesturesurface import Line
-from kivy.uix.actionbar import Label
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.actionbar import BoxLayout
-from kivy.app import App
-from kivy.uix.widget import  Widget
-from kivy.lang import Builder
+from PySide6.QtWidgets import (
+    QMainWindow, QApplication, QCheckBox, QTreeWidgetItem, QPushButton, QHBoxLayout, QFrame, QSizePolicy
+)
+from PySide6.QtGui import QPixmap, QIcon, QMovie
+from tkinter.filedialog import askopenfilename
+from window_downloader_dctf import Ui_MainWindow
+from PySide6.QtCore import QThread, QSize
+from step import Step
 
-# Builder.load_file('window.kv')
+class MainWindow(QMainWindow, Ui_MainWindow):
+    """
+    Classe principal da interface gráfica do sistema, responsável por interagir com o usuário e orquestrar as operações.
+    """
+    step = Step()
+    def __init__(self, parent = None) -> None:
+        """
+        Inicializa a janela principal e conecta os sinais aos slots.
+        """
+        super().__init__(parent)
+        self.setupUi(self)
 
-class Downloader(BoxLayout):
+        self.ref = {
+            0: lambda: self.step.next(),
+            1: lambda: self.step.back(),
+            2: lambda: self.step.jump()
+        }
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.orientation = 'vertical'
+        self.pushButton_execute.clicked.connect(self.send)
+        self.pushButton_back.clicked.connect(lambda: self.send(1))
+        self.pushButton_jump.clicked.connect(lambda: self.send(2))
+        
+        label, instruction = self.step()
+        self.label_instruction.setText(instruction)
+        self.pushButton_execute.setText(label)
 
-        self.add_widget(Label(
-            text='Para baixar automaticamente seus recibos da DCTF WEB;'
-        ))
-
-        header_title = GridLayout(cols=3)
-        header_title.add_widget(Label(text='Siga as seguintes instrunções:'))
-
-        self.add_widget(header_title)
-
-        btns_box = BoxLayout()
-
-        btns_box.add_widget(Button(text='Enviar'))
-
-        btns_utils_box = BoxLayout(orientation='vertical')
-        btns_utils_box.add_widget(Button(text='Voltar'))
-        btns_utils_box.add_widget(Button(text='Pular'))
-        btns_box.add_widget(btns_utils_box)
-
-        self.add_widget(btns_box)
-
-class DownloaderApp(App):
-    def build(self):
-        return Downloader()
+    #Executado pelo enviar / prosseguir
+    def send(self, value = 0):
+        func = self.ref[value]
+        label, instruction = func()
+        
+        self.label_instruction.setText(instruction)
+        self.pushButton_execute.setText(label)
+        
+        #Receber texto do botão também
+        #Define o result como valor da instrunção
 
 if __name__ == '__main__':
-    DownloaderApp().run()
+    # Inicializa a aplicação Qt.
+    app = QApplication()
+    window = MainWindow()
+    window.show()
+    app.exec()
