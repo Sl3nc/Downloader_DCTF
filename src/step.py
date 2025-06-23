@@ -1,6 +1,7 @@
 class Step:
     value = -1
     max_value = -1
+    min_value = -1
     message_index = 'message'
     func_index = 'func'
     label_index = 'label'
@@ -26,9 +27,14 @@ class Step:
             'func': False
         },
         {
-            'message': 'A janela foi minimizada e a operação está ocorrendo, acompanhe seu progresso na barra abaixo', 
+            'message': 'Confirme a execução da operação na janela flutuante', 
             'label': 'Executar',
             'func': True
+        },
+        {
+            'message': 'O navegador foi minimizado e a operação está ocorrendo, acompanhe seu progresso na barra abaixo', 
+            'label': 'Executar',
+            'func': False
         },
     ]
 
@@ -68,5 +74,5 @@ class Step:
         return data[self.label_index], data[self.message_index]
     
     def start(self):
-        self.value = -1
-        self.max_value = -1
+        self.value = self.min_value
+        self.max_value = self.min_value

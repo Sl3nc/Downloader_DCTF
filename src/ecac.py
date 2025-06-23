@@ -62,3 +62,5 @@ class ECAC:
         Fecha o navegador automatizado.
         """
         self.browser.close()
+
+    def is_alive(self): self.browser.current_url

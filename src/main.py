@@ -56,9 +56,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def reset(self, was_started= False):
         if was_started == True:
-            self.worker = None
             self.load_progress()
 
+        self.worker = None
         self.step.start()
         self.send()
 
@@ -72,6 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.disable_bttns()
             else:
                 if askyesno('Aviso', self.is_find_msg):
+                    self.send()
                     self.worker.confirm()
                 else:
                     showinfo('Aviso', self.no_find_msg)
@@ -90,7 +91,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.disable_bttns()
         path = askdirectory()
         if path == '': raise Exception('Operação cancelada')
-
         return path
 
     def open(self, path):
@@ -119,8 +119,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         showinfo(title='Aviso', message= self.complete_msg)
         startfile(path)
 
-    def error(self, message):
-        self.reset(True)
+    def error(self, result: list[str, bool]):
+        message, reset = result
+        self.reset(reset)
         showwarning(title='Aviso', message= message)
 
     def load_progress(self):
