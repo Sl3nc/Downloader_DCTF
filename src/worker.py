@@ -22,7 +22,6 @@ class Worker(QObject):
             self._wait_confirm()
             ecac.hide()
             ecac.download_files()
-            
             ecac.close()
             self.conclusion.emit(self.download_path)
         except Exception as err:

@@ -1,6 +1,6 @@
 class Step:
-    value = 0
-    max_value = 0
+    value = -1
+    max_value = -1
     message_index = 'message'
     func_index = 'func'
     label_index = 'label'
@@ -33,6 +33,10 @@ class Step:
     ]
 
     def __init__(self):
+        self.utils_ref = {
+            0: lambda: True,
+            1: lambda: self.value < self.max_value
+        }
         pass
 
     def next(self) -> str:
@@ -40,13 +44,19 @@ class Step:
         return self._data(self.value)
 
     def back(self) -> str:
+        if self.max_value < self.value \
+            and self.value < len(self.instructions) - 1:
+            self.max_value = self.value
         if self.value != 0: self.value = self.value - 1
-        if self.max_value < self.value: self.max_value = self.value
 
         return self._data(self.value)
 
     def jump(self) -> str:
-        self.value = len(self.instructions) - 1
+        for i in range(self.value + 1, len(self.instructions)):
+            if self.instructions[i][self.func_index]:
+                self.value = i
+                return self._data(i)
+
         return self._data(self.value)
     
     def is_execution_time(self):
@@ -57,7 +67,6 @@ class Step:
         data = self.instructions[value]
         return data[self.label_index], data[self.message_index]
     
-    def __call__(self, *args, **kwds):
-        self.value = 0
-        self.max_value = 0
-        return self._data(0)
+    def start(self):
+        self.value = -1
+        self.max_value = -1

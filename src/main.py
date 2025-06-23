@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QPixmap, QIcon, QMovie
 from tkinter.filedialog import askdirectory
-from tkinter.messagebox import showwarning, showinfo
+from tkinter.messagebox import showwarning, showinfo, askyesno
 from window_downloader_dctf import Ui_MainWindow
 from PySide6.QtCore import QThread, QSize
 from step import Step
@@ -17,6 +17,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     step = Step()
     worker = None
     complete_msg = 'Todos arquivos DCTF WEB foram baixados com êxito, a pasta que destinou o download será aberta após o "ok"'
+    no_find_msg = 'Retrosseda os passos até alcançar a tela indicada, caso a dificuldade persista, consulte os responsáveis'
+    is_find_msg = 'Confirma ter alcançado a tela indicada pelas instrunções?'
 
     def __init__(self, parent = None) -> None:
         """
@@ -31,6 +33,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             2: lambda: self.step.jump()
         }
 
+        self.to_disable = [
+            self.pushButton_back,
+            self.pushButton_execute,
+            self.pushButton_jump
+        ]
+
         self.pushButton_execute.clicked.connect(self.send)
         self.pushButton_back.clicked.connect(lambda: self.send(1))
         self.pushButton_jump.clicked.connect(lambda: self.send(2))
@@ -44,17 +52,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label_instruction.setText(instruction)
         self.pushButton_execute.setText(label)
         
-        if value == 0 and self.step.is_execution_time() == True:
-            self.execute()
+        if self.step.is_execution_time(): self.execute()
 
     def reset(self, was_started= False):
-        if was_started ==  True:
+        if was_started == True:
             self.worker = None
             self.load_progress()
 
-        label, instruction = self.step()
-        self.label_instruction.setText(instruction)
-        self.pushButton_execute.setText(label)
+        self.step.start()
+        self.send()
 
     def execute(self):
         try:
@@ -63,26 +69,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.open(path)
                 
                 self.send()
-                self.pushButton_execute.setDisabled(False)
+                self.disable_bttns()
             else:
-                self.worker.confirm()
+                if askyesno('Aviso', self.is_find_msg):
+                    self.worker.confirm()
+                else:
+                    showinfo('Aviso', self.no_find_msg)
+                    self.send(1)
+
         except Exception as err:
+            self.reset()
+            self.disable_bttns()
             showwarning(title='Aviso', message=err)
 
+    def disable_bttns(self):
+        state = True if self.pushButton_execute.isEnabled() else False
+        for i in self.to_disable: i.setDisabled(state)
+
     def request_path(self):
-        self.pushButton_execute.setDisabled(True)
+        self.disable_bttns()
         path = askdirectory()
-        if path == '':
-            self.reset()
-            self.pushButton_execute.setDisabled(False)
-            raise Exception('Operação cancelada')
-        
+        if path == '': raise Exception('Operação cancelada')
+
         return path
 
     def open(self, path):
-        self.worker = Worker(
-            path
-        )
+        self.worker = Worker(path)
         self._thread = QThread()
 
         self.worker.moveToThread(self._thread)
