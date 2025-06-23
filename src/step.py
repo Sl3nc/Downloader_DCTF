@@ -1,3 +1,6 @@
+from pathlib import Path
+from json import load
+
 class Step:
     value = -1
     max_value = -1
@@ -5,44 +8,17 @@ class Step:
     message_index = 'message'
     func_index = 'func'
     label_index = 'label'
-    instructions = [
-        {
-            'message': 'Primeiramente, clique em "iniciar"', 
-            'label': 'Iniciar',
-            'func': False
-        },
-        {
-            'message': 'Insira a pasta onde será feito os downloads', 
-            'label': 'Prosseguir',
-            'func': True
-        },
-        {
-            'message': 'Um navegador foi aberto na página do ECAC, certo?\nFaça login na conta da Deltaprice\n(clique em prosseguir quando acabar)', 
-            'label': 'Prosseguir',
-            'func': False
-        },
-        {
-            'message': 'Tudo pronto!\nAgora que está na tela ideal, clique em "Executar"', 
-            'label': 'Executar',
-            'func': False
-        },
-        {
-            'message': 'Confirme a execução da operação na janela flutuante', 
-            'label': 'Executar',
-            'func': True
-        },
-        {
-            'message': 'O navegador foi minimizado e a operação está ocorrendo, acompanhe seu progresso na barra abaixo', 
-            'label': 'Executar',
-            'func': False
-        },
-    ]
+    instruction_path = Path(__file__).parent / 'json' / 'instructions.json'
+    instructions = ''
 
     def __init__(self):
         self.utils_ref = {
             0: lambda: True,
             1: lambda: self.value < self.max_value
         }
+
+        with open(self.instruction_path, 'r', encoding='utf-8') as file:
+            self.instructions = load(file)
         pass
 
     def next(self) -> str:
