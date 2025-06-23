@@ -22,7 +22,6 @@ class Worker(QObject):
         try:
             ecac = ECAC()
             self._wait_confirm(ecac)
-            ecac.hide()
             ecac.download_files()
             ecac.close()
             self.conclusion.emit(self.download_path)

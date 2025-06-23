@@ -1,6 +1,6 @@
 [
     {
-        "message": "Primeiramente, clique em 'iniciar'",
+        "message": "Primeiramente, clique em \"iniciar\"",
         "label": "Iniciar",
         "func": false
     },
@@ -10,7 +10,12 @@
         "func": true
     },
     {
-        "message": "Um navegador foi aberto na página do ECAC, certo?\nFaça login na conta da Deltaprice\n(clique em prosseguir quando acabar)",
+        "message": "Um navegador foi aberto na página do ECAC, certo?\n\n--Caso não esteja logado--\nEntre no \"Gov.br\" com a assinatura da Deltaprice\n(Solicite aos supervisores caso não a tenha instalado)",
+        "label": "Prosseguir",
+        "func": false
+    },
+    {
+        "message": "Clique em sequência:\n1°) Declarações e Demonstrativos\n2°) Assinar e Transmitir o DCTF WEB\n3°) Preencher o Captcha",
         "label": "Prosseguir",
         "func": false
     },
@@ -25,7 +30,7 @@
         "func": true
     },
     {
-        "message": "O navegador foi minimizado e a operação está ocorrendo, acompanhe seu progresso na barra abaixo",
+        "message": "O navegador foi minimizado e a operação está ocorrendo,\n acompanhe seu progresso na barra abaixo",
         "label": "Executar",
         "func": false
     }
