@@ -1,0 +1,32 @@
+[
+    {
+        "message": "Primeiramente, clique em 'iniciar'",
+        "label": "Iniciar",
+        "func": false
+    },
+    {
+        "message": "Insira a pasta onde será feito os downloads",
+        "label": "Prosseguir",
+        "func": true
+    },
+    {
+        "message": "Um navegador foi aberto na página do ECAC, certo?\nFaça login na conta da Deltaprice\n(clique em prosseguir quando acabar)",
+        "label": "Prosseguir",
+        "func": false
+    },
+    {
+        "message": "Tudo pronto!\nAgora que está na tela ideal, clique em 'Executar'",
+        "label": "Executar",
+        "func": false
+    },
+    {
+        "message": "Confirme a execução da operação na janela flutuante",
+        "label": "Executar",
+        "func": true
+    },
+    {
+        "message": "O navegador foi minimizado e a operação está ocorrendo, acompanhe seu progresso na barra abaixo",
+        "label": "Executar",
+        "func": false
+    }
+]
