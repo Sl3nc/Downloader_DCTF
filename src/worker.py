@@ -1,6 +1,6 @@
 from PySide6.QtCore import QObject, Signal
 from selenium.common.exceptions import InvalidSessionIdException
-from ecac import ECAC
+from ecac import Browser
 from time import sleep
 
 class Worker(QObject):
@@ -20,25 +20,29 @@ class Worker(QObject):
 
     def execute(self):
         try:
-            ecac = ECAC()
-            self._wait_confirm(ecac)
-            ecac.download_files()
-            ecac.close()
+            browser = Browser(self.download_path)
+            # can_continue.emit()
+            self._wait_confirm(browser)
+            browser.ecac()
+            self._wait_confirm(browser)
+            browser.download_files()
+            browser.close()
             self.conclusion.emit(self.download_path)
         except InvalidSessionIdException:
             in_execution = True if self.ready else False
             self.error.emit([self.session_err_msg, in_execution])
         except Exception as err:
-            ecac.close()
+            browser.close()
             in_execution = True if self.ready else False
             self.error.emit([err, in_execution])
         finally:
             self.end.emit()
 
-    def _wait_confirm(self, ecac: ECAC):
+    def _wait_confirm(self, ecac: Browser):
         while self.ready == False:
             ecac.is_alive()
             sleep(self.wait_sec)
+        self.ready = False
 
     def confirm(self): 
         self.ready = True
