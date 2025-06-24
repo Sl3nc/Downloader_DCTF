@@ -3,8 +3,6 @@ from pyautogui import (
     hotkey, moveTo, displayMousePosition, scroll, click, typewrite, press,
     locateAllOnScreen
 )
-from dateutil.relativedelta import relativedelta
-from datetime import datetime
 from time import sleep
 
 class Browser:
@@ -35,13 +33,13 @@ class Browser:
     def ecac(self):
         open_new_tab(self.ECAC_URL)
 
-    def download_files(self):
+    def download_files(self, start_date: str, end_date: str):
         hotkey('alt', 'tab')
         self._filters()
         self._download()
         sleep(2)
 
-    def _filters(self):
+    def _filters(self, start_date: str, end_date: str):
         scroll(100)
 
         #Procurador
@@ -51,8 +49,7 @@ class Browser:
         displayMousePosition()
         #Período
         click(47, 479, 3)
-        now = datetime.now() - relativedelta(months=1)
-        typewrite(now.strftime('%d/%m/%Y'))
+        typewrite(start_date)
         press('enter')
         sleep(2)
 

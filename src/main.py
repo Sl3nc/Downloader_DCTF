@@ -5,10 +5,13 @@ from PySide6.QtGui import QPixmap, QIcon, QMovie
 from tkinter.filedialog import askdirectory
 from tkinter.messagebox import showwarning, showinfo, askyesno
 from window_downloader_dctf import Ui_MainWindow
-from PySide6.QtCore import QThread, QSize
+from PySide6.QtCore import QThread, QSize, QDate
 from step import Step
 from worker import Worker
 from os import startfile
+from datetime import date
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -20,7 +23,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     no_find_msg = 'Retrosseda os passos até alcançar a tela indicada, caso a dificuldade persista, consulte os responsáveis'
     is_find_msg = 'Confirma ter alcançado a tela indicada pelas instrunções?'
     warning_auto = 'Uma operação automática irá iniciar, NÃO USE o mouse e teclado até que a próxima instrunção apareça'
-
+    DATE_INDEX = 1
+    LOAD_INDEX = 2
+    MAIN_INDEX = 0
 
     def __init__(self, parent = None) -> None:
         """
@@ -28,6 +33,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         super().__init__(parent)
         self.setupUi(self)
+
+        now = datetime.now()
+        self.dateEdit_end.setDate(now)
+        self.dateEdit_2.setDate(now  - relativedelta(months=1))
 
         self.ref = {
             0: lambda: self.step.next(),
@@ -44,6 +53,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_execute.clicked.connect(self.send)
         self.pushButton_back.clicked.connect(lambda: self.send(1))
         self.pushButton_jump.clicked.connect(lambda: self.send(2))
+
+        self.pushButton_send_date.clicked.connect(self.request_date)
+        self.pushButton_cancel_date.clicked.connect(self.cancel_date)
         
         self.reset()
 
@@ -65,25 +77,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.send()
 
     def execute(self):
-        try:
-            if self.worker == None:
-                path = self.request_path()
+        if self.worker == None:
+            self.stackedWidget.setCurrentIndex(self.DATE_INDEX)
+        else:
+            if askyesno('Aviso', self.is_find_msg):
                 showwarning('CUIDADO', self.warning_auto)
-                self.open(path)
+                self.worker.confirm()
+                self.send()
             else:
-                if askyesno('Aviso', self.is_find_msg):
-                    showwarning('CUIDADO', self.warning_auto)
-                    self.worker.confirm()
-                    self.send()
-                else:
-                    showinfo('Aviso', self.no_find_msg)
-                    self.send(1)
-
+                showinfo('Aviso', self.no_find_msg)
+                self.send(1)
+    
+    def request_date(self):
+        try:
+            date_start = date(*self.dateEdit_2.date().getDate())
+            date_end = date(*self.dateEdit_end.date().getDate())
+            if date_end < date_start:
+                raise Exception('Operção cancelada')
+            
+            path = self.request_path()
+            showwarning('CUIDADO', self.warning_auto)
+            self.open(path)
         except Exception as err:
             self.reset()
             self.disable_bttns()
             showwarning(title='Aviso', message=err)
 
+    def request_path(self):
+        self.disable_bttns()
+        path = askdirectory()
+        if path == '': raise Exception('Operação cancelada')
+        return path
+
+    def cancel_date(self):
+        self.reset()
+        self.disable_bttns()
+        showwarning(title='Aviso', message='Operação cancelada')
+        
     def to_continue(self):
         self.send()
         self.disable_bttns()
@@ -92,14 +122,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         state = True if self.pushButton_execute.isEnabled() else False
         for i in self.to_disable: i.setDisabled(state)
 
-    def request_path(self):
-        self.disable_bttns()
-        path = askdirectory()
-        if path == '': raise Exception('Operação cancelada')
-        return path
 
     def open(self, path):
-        self.worker = Worker(path)
+        self.worker = Worker(
+            path,
+            self.dateEdit.text(),
+            self.dateEdit_2.text()
+        )
         self._thread = QThread()
 
         self.worker.moveToThread(self._thread)
@@ -134,7 +163,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Controla a exibição do carregamento geral.
         """
-        value = 1 if self.stackedWidget.currentIndex() == 0 else 0
+        value = self.LOAD_INDEX if self.stackedWidget.currentIndex() == self.MAIN_INDEX else self.MAIN_INDEX
         self.stackedWidget.setCurrentIndex(value)
 
 if __name__ == '__main__':

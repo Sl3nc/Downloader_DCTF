@@ -15,16 +15,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QMainWindow, QMenuBar, QProgressBar, QPushButton,
-    QSizePolicy, QStackedWidget, QStatusBar, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QDateEdit, QFrame, QHBoxLayout,
+    QLabel, QMainWindow, QMenuBar, QProgressBar,
+    QPushButton, QSizePolicy, QStackedWidget, QStatusBar,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(545, 340)
+        MainWindow.resize(500, 348)
         MainWindow.setStyleSheet(u"background-color: rgb(242, 242, 242);")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -178,6 +178,98 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.frame_2)
 
         self.stackedWidget.addWidget(self.page_3)
+        self.page = QWidget()
+        self.page.setObjectName(u"page")
+        self.verticalLayout_4 = QVBoxLayout(self.page)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.label_2 = QLabel(self.page)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setFont(font)
+        self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_4.addWidget(self.label_2)
+
+        self.frame_5 = QFrame(self.page)
+        self.frame_5.setObjectName(u"frame_5")
+        self.frame_5.setFont(font3)
+        self.frame_5.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_5 = QHBoxLayout(self.frame_5)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.label_3 = QLabel(self.frame_5)
+        self.label_3.setObjectName(u"label_3")
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
+        self.label_3.setSizePolicy(sizePolicy3)
+        self.label_3.setFont(font1)
+
+        self.horizontalLayout_5.addWidget(self.label_3)
+
+        self.dateEdit_2 = QDateEdit(self.frame_5)
+        self.dateEdit_2.setObjectName(u"dateEdit_2")
+        self.dateEdit_2.setFont(font1)
+        self.dateEdit_2.setCalendarPopup(True)
+
+        self.horizontalLayout_5.addWidget(self.dateEdit_2)
+
+        self.line_4 = QFrame(self.frame_5)
+        self.line_4.setObjectName(u"line_4")
+        self.line_4.setMinimumSize(QSize(3, 0))
+        self.line_4.setStyleSheet(u"background-color: rgb(85, 170, 255);")
+        self.line_4.setLineWidth(0)
+        self.line_4.setFrameShape(QFrame.Shape.VLine)
+        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.horizontalLayout_5.addWidget(self.line_4)
+
+        self.label_4 = QLabel(self.frame_5)
+        self.label_4.setObjectName(u"label_4")
+        sizePolicy3.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
+        self.label_4.setSizePolicy(sizePolicy3)
+        self.label_4.setFont(font3)
+
+        self.horizontalLayout_5.addWidget(self.label_4)
+
+        self.dateEdit_end = QDateEdit(self.frame_5)
+        self.dateEdit_end.setObjectName(u"dateEdit_end")
+        self.dateEdit_end.setFont(font1)
+        self.dateEdit_end.setCalendarPopup(True)
+
+        self.horizontalLayout_5.addWidget(self.dateEdit_end)
+
+
+        self.verticalLayout_4.addWidget(self.frame_5)
+
+        self.frame_6 = QFrame(self.page)
+        self.frame_6.setObjectName(u"frame_6")
+        self.frame_6.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_6 = QHBoxLayout(self.frame_6)
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.horizontalLayout_6.setContentsMargins(9, 0, 9, 0)
+        self.pushButton_cancel_date = QPushButton(self.frame_6)
+        self.pushButton_cancel_date.setObjectName(u"pushButton_cancel_date")
+        self.pushButton_cancel_date.setStyleSheet(u"background-color: rgb(223, 223, 223);")
+        icon2 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit))
+        self.pushButton_cancel_date.setIcon(icon2)
+
+        self.horizontalLayout_6.addWidget(self.pushButton_cancel_date)
+
+        self.pushButton_send_date = QPushButton(self.frame_6)
+        self.pushButton_send_date.setObjectName(u"pushButton_send_date")
+        self.pushButton_send_date.setStyleSheet(u"background-color: rgb(223, 223, 223);")
+        icon3 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.DocumentSend))
+        self.pushButton_send_date.setIcon(icon3)
+
+        self.horizontalLayout_6.addWidget(self.pushButton_send_date)
+
+
+        self.verticalLayout_4.addWidget(self.frame_6)
+
+        self.stackedWidget.addWidget(self.page)
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
         self.verticalLayout_2 = QVBoxLayout(self.page_4)
@@ -186,7 +278,7 @@ class Ui_MainWindow(object):
         self.label.setObjectName(u"label")
         sizePolicy1.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy1)
-        self.label.setFont(font1)
+        self.label.setFont(font)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_2.addWidget(self.label)
@@ -204,7 +296,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 545, 22))
+        self.menubar.setGeometry(QRect(0, 0, 500, 22))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -227,6 +319,11 @@ class Ui_MainWindow(object):
         self.pushButton_execute.setText(QCoreApplication.translate("MainWindow", u"Prosseguir", None))
         self.pushButton_back.setText(QCoreApplication.translate("MainWindow", u" Voltar", None))
         self.pushButton_jump.setText(QCoreApplication.translate("MainWindow", u"Pular ", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Per\u00edodo de apura\u00e7\u00e3o", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Inicio:", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"T\u00e9rmino:", None))
+        self.pushButton_cancel_date.setText(QCoreApplication.translate("MainWindow", u"Cancelar", None))
+        self.pushButton_send_date.setText(QCoreApplication.translate("MainWindow", u"Enviar", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Recibos baixados:", None))
     # retranslateUi
 
