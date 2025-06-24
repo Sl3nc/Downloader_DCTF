@@ -1,6 +1,7 @@
 from webbrowser import open, get, open_new_tab, open_new, Chrome
 from pyautogui import (
-    hotkey, moveTo, displayMousePosition, scroll, click, typewrite, press
+    hotkey, moveTo, displayMousePosition, scroll, click, typewrite, press,
+    locateAllOnScreen
 )
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
@@ -60,6 +61,7 @@ class Browser:
         click(742, 502)
         sleep(2)
 
+        #Botão de pesquisa
         click(582, 579)
         sleep(2)
         
