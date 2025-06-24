@@ -1,6 +1,5 @@
 from PySide6.QtCore import QObject, Signal
-from selenium.common.exceptions import InvalidSessionIdException
-from ecac import Browser
+from browser import Browser
 from time import sleep
 
 class Worker(QObject):
@@ -11,6 +10,7 @@ class Worker(QObject):
     start = Signal()
     error = Signal(list)
     progress_bar = Signal(int)
+    can_continue = Signal()
     session_err_msg = 'O navegador a ser usado foi fechado, o procedimento será reiniciado.. favor não fechar o navegador'
 
     def __init__(self, download_path: str) -> None:
@@ -21,16 +21,18 @@ class Worker(QObject):
     def execute(self):
         try:
             browser = Browser(self.download_path)
-            # can_continue.emit()
+
+            self.can_continue.emit()
             self._wait_confirm(browser)
+
             browser.ecac()
             self._wait_confirm(browser)
+
+            self.start.emit()
             browser.download_files()
             browser.close()
+            # self.can_continue.emit()
             self.conclusion.emit(self.download_path)
-        except InvalidSessionIdException:
-            in_execution = True if self.ready else False
-            self.error.emit([self.session_err_msg, in_execution])
         except Exception as err:
             browser.close()
             in_execution = True if self.ready else False
@@ -46,4 +48,3 @@ class Worker(QObject):
 
     def confirm(self): 
         self.ready = True
-        self.start.emit()

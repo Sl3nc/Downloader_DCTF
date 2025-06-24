@@ -19,6 +19,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     complete_msg = 'Todos arquivos DCTF WEB foram baixados com êxito, a pasta que destinou o download será aberta após o "ok"'
     no_find_msg = 'Retrosseda os passos até alcançar a tela indicada, caso a dificuldade persista, consulte os responsáveis'
     is_find_msg = 'Confirma ter alcançado a tela indicada pelas instrunções?'
+    warning_auto = 'Uma operação automática irá iniciar, NÃO USE o mouse e teclado até que a próxima instrunção apareça'
+
 
     def __init__(self, parent = None) -> None:
         """
@@ -66,14 +68,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             if self.worker == None:
                 path = self.request_path()
+                showwarning('CUIDADO', self.warning_auto)
                 self.open(path)
-                
-                self.send()
-                self.disable_bttns()
             else:
                 if askyesno('Aviso', self.is_find_msg):
-                    self.send()
+                    showwarning('CUIDADO', self.warning_auto)
                     self.worker.confirm()
+                    self.send()
                 else:
                     showinfo('Aviso', self.no_find_msg)
                     self.send(1)
@@ -82,6 +83,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.reset()
             self.disable_bttns()
             showwarning(title='Aviso', message=err)
+
+    def to_continue(self):
+        self.send()
+        self.disable_bttns()
 
     def disable_bttns(self):
         state = True if self.pushButton_execute.isEnabled() else False
@@ -104,6 +109,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker.start.connect(self.load_progress)
         self.worker.error.connect(self.error)
         self.worker.conclusion.connect(self.conclusion)
+        self.worker.can_continue.connect(self.to_continue)
         self.worker.progress_bar.connect(self.to_progress)
         # self._thread.finished.connect(self.worker.deleteLater)
         self._thread.start()

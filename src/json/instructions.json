@@ -10,7 +10,7 @@
         "func": true
     },
     {
-        "message": "Um navegador foi aberto na configuração de transferências do Chrome, certo?\n> DESMARQUE as duas opções exibida\n> Selecione a pasta de transferências selecionada anteriormente",
+        "message": "Um navegador foi aberto na configuração de transferências do Chrome, certo?\n> DESMARQUE as duas opções abaixo do botão \"alterar\"",
         "label": "Prosseguir",
         "func": false
     },

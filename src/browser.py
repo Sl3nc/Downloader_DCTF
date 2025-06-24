@@ -9,7 +9,7 @@ class Browser:
     Classe responsável por automatizar o acesso ao sistema Acessorias.com para buscar e-mails de contato das empresas.
     """
     DOWNLOAD_URL = 'chrome://settings/downloads'
-    ECAC_URL = 'https://cav.receita.fazenda.gov.br/autenticacao/login'
+    ECAC_URL = 'https://cav.receita.fazenda.gov.br/autenticacao'
 
     def __init__(self, path: str):
         self.chrome_config(path)
