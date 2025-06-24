@@ -2,6 +2,8 @@ from webbrowser import open, get, open_new_tab, open_new, Chrome
 from pyautogui import (
     hotkey, moveTo, displayMousePosition, scroll, click, typewrite, press
 )
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 from time import sleep
 
 class Browser:
@@ -22,7 +24,6 @@ class Browser:
         press('enter')
         sleep(2)
 
-        # displayMousePosition()
         click(998, 235)
         sleep(1)
         typewrite(path.replace('/','\\'))
@@ -42,21 +43,29 @@ class Browser:
     def _filters(self):
         scroll(100)
 
+        #Procurador
+        click(26, 391)
+        sleep(5)
+
+        displayMousePosition()
         #Período
-        moveTo(47, 469)
-        hotkey('ctrl', 'a')
+        click(47, 479, 3)
+        now = datetime.now() - relativedelta(months=1)
+        typewrite(now.strftime('%d/%m/%Y'))
+        press('enter')
         sleep(2)
 
         #Categoria
-        moveTo(779, 449)
+        click(779, 459)
+        click(742, 502)
+        sleep(2)
+
+        click(582, 579)
         sleep(2)
         
-        #Procurador
-        moveTo(26, 391)
-        sleep(5)
-
         #Recibo
         moveTo(1264, 700)
+        ...
 
     def _download(self):...
 
