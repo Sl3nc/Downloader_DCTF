@@ -40,7 +40,7 @@
         "func": true
     },
     {
-        "message": "O navegador foi minimizado e a operação está ocorrendo,\n acompanhe seu progresso na barra abaixo",
+        "message": "A operação que está ocorrendo demora em média 13 minutos para acabar, NÃO USE o teclado ou mouse nesse período, avisarei quando acabar ;)",
         "label": "Executar",
         "func": false
     }

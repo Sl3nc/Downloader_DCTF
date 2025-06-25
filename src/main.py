@@ -68,10 +68,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         if self.step.is_execution_time(): self.execute()
 
-    def reset(self, was_started= False):
-        if was_started == True:
-            self.load_progress()
-
+    def reset(self):
         self.worker = None
         self.step.start()
         self.send()
@@ -136,22 +133,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._thread.started.connect(self.worker.execute)
         self.worker.end.connect(self._thread.quit)
         self.worker.end.connect(self._thread.deleteLater)
-        self.worker.start.connect(self.load_progress)
+        self.worker.start.connect(self.disable_bttns)
         self.worker.error.connect(self.error)
         self.worker.conclusion.connect(self.conclusion)
         self.worker.can_continue.connect(self.to_continue)
-        self.worker.progress_bar.connect(self.to_progress)
         # self._thread.finished.connect(self.worker.deleteLater)
         self._thread.start()
     
-    def to_progress(self, value):
-        """
-        Atualiza o valor da barra de progresso.
-        """
-        self.progressBar.setValue(value)
-
     def conclusion(self, path):
-        self.reset(True)
+        self.reset()
+        self.disable_bttns()
         showinfo(title='Aviso', message= self.complete_msg)
         startfile(path)
 
@@ -159,13 +150,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         message, reset = result
         self.reset(reset)
         showwarning(title='Aviso', message= message)
-
-    def load_progress(self):
-        """
-        Controla a exibição do carregamento geral.
-        """
-        value = self.LOAD_INDEX if self.stackedWidget.currentIndex() == self.MAIN_INDEX else self.MAIN_INDEX
-        self.stackedWidget.setCurrentIndex(value)
 
 if __name__ == '__main__':
     # Inicializa a aplicação Qt.

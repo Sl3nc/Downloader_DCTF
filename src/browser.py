@@ -1,9 +1,10 @@
 from webbrowser import open, get, open_new_tab, open_new, Chrome
 from pyautogui import (
-    hotkey, moveTo, displayMousePosition, scroll, click, typewrite, press,
-    locateAllOnScreen
+    hotkey, displayMousePosition, scroll, click, typewrite, press,
+    locateAllOnScreen, locateOnScreen, useImageNotFoundException,
 )
 from time import sleep
+from pathlib import Path
 
 class Browser:
     """
@@ -11,24 +12,42 @@ class Browser:
     """
     DOWNLOAD_URL = 'chrome://settings/downloads'
     ECAC_URL = 'https://cav.receita.fazenda.gov.br/autenticacao'
+    next_arrow_path = (Path(__file__).parent / 'imgs' / 'next_arrow.png').__str__()
+    recibo_path = (Path(__file__).parent / 'imgs' / 'recibo.png').__str__()
 
     def __init__(self, path: str):
+        useImageNotFoundException(False)
         self.chrome_config(path)
+        pass
 
     def chrome_config(self, path: str):
         open('https://www.google.com/')
         sleep(1)
+        self.__enter_config()
+
+        # displayMousePosition()
+        click(400, 250, 3)
+        hotkey('ctrl', 'c')
+
+        self.__entry_download_path(lambda: typewrite(path.replace('/','\\')))
+
+    def chrome_reset(self):
+        self.__enter_config()
+        self.__entry_download_path(lambda: hotkey('ctrl', 'v'))
+
+    def __entry_download_path(self, func):
+        click(998, 235)
+        sleep(1)
+        func()
+        sleep(1)
+        press('tab')
+        press('enter')
+
+    def __enter_config(self):
         click(575, 63)
         typewrite(self.DOWNLOAD_URL)
         press('enter')
         sleep(2)
-
-        click(998, 235)
-        sleep(1)
-        typewrite(path.replace('/','\\'))
-        sleep(1)
-        press('tab')
-        press('enter')
 
     def ecac(self):
         open_new_tab(self.ECAC_URL)
@@ -40,38 +59,56 @@ class Browser:
         sleep(2)
 
     def _filters(self, start_date: str, end_date: str):
-        scroll(100)
+        ref = {
+            47: lambda: typewrite(start_date),
+            157: lambda: typewrite(end_date),
+            385: lambda: press('backspace'),
+            488: lambda: press('backspace')
+        }
+        scroll(1000)
 
         #Procurador
         click(26, 391)
-        sleep(5)
-
-        # displayMousePosition()
-        #Período
-        click(47, 479, 3)
-        typewrite(start_date)
-        press('enter')
+        sleep(8)
         
-        click(150, 479, 3)
-        typewrite(end_date)
-        press('enter')
-        sleep(2)
-
+        #Período
+        for pos, entry in ref.items():
+            click(pos, 484, 4)
+            entry()
+            press('enter')
+        
         #Categoria
         click(779, 459)
         click(742, 502)
-        sleep(2)
 
         #Botão de pesquisa
         click(582, 579)
-        sleep(5)
+        sleep(3)
+
+    def _download(self):
+        arrow_pos = 0
+
+        while arrow_pos != None :
+            scroll(-500)
+            sleep(0.5)
+
+            #Recibo
+            for i in locateAllOnScreen(self.recibo_path):
+                click(i)
+                sleep(2.5)
+                click(i)
+                sleep(0.5)
+
+            scroll(-500)
+            sleep(0.5)
+            scroll(-500)
+            sleep(0.5)
+
+            arrow_pos = locateOnScreen(self.next_arrow_path)
+            if arrow_pos != None:
+                click(arrow_pos)
+                sleep(3)
         
-        #Recibo
-        moveTo(1264, 700)
-        ...
-
-    def _download(self):...
-
     def close(self):
         """
         Fecha a aba do ECAC.

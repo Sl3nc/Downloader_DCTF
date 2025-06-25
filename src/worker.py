@@ -32,6 +32,7 @@ class Worker(QObject):
 
             self.start.emit()
             browser.download_files(self.start_date, self.end_date)
+            browser.chrome_reset()
             browser.close()
             # self.can_continue.emit()
             self.conclusion.emit(self.download_path)
