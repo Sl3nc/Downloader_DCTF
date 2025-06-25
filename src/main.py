@@ -81,13 +81,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.worker == None:
             self.stackedWidget.setCurrentIndex(self.DATE_INDEX)
         else:
+            self.disable_bttns()
             if askyesno('Aviso', self.is_find_msg):
                 showwarning('CUIDADO', self.warning_auto)
                 self.worker.confirm()
-                self.send()
             else:
                 showinfo('Aviso', self.no_find_msg)
                 self.send(1)
+                self.disable_bttns()
     
     def request_date(self):
         try:
@@ -145,7 +146,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._thread.start()
 
     def start(self):
-        self.disable_bttns()
         self.pushButton_execute.disconnect(self.current_connection)
         self.current_connection =\
             self.pushButton_execute.clicked.connect(self.cancel)

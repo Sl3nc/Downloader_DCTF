@@ -29,7 +29,7 @@ class Browser:
 
         self.reposite_window()
 
-        self.__enter_config()
+        self.__enter_url()
 
         # displayMousePosition()
         click(400, 250, 3)
@@ -46,7 +46,7 @@ class Browser:
         if chrome.isMaximized == False: chrome.maximize()
 
     def chrome_reset(self):
-        self.__enter_config()
+        self.__enter_url(self.DOWNLOAD_URL)
         self.__entry_download_path(lambda: hotkey('ctrl', 'v'))
 
     def __entry_download_path(self, func):
@@ -57,14 +57,14 @@ class Browser:
         press('tab')
         press('enter')
 
-    def __enter_config(self):
+    def ecac(self):
+        self.__enter_url(self.ECAC_URL)
+        
+    def __enter_url(self, url):
         click(575, 63)
-        typewrite(self.DOWNLOAD_URL)
+        typewrite(url)
         press('enter')
         sleep(2)
-
-    def ecac(self):
-        open_new_tab(self.ECAC_URL)
 
     def download_files(self, start_date: str, end_date: str):
         hotkey('alt', 'tab')

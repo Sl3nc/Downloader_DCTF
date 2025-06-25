@@ -16,9 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QDateEdit, QFrame, QHBoxLayout,
-    QLabel, QMainWindow, QMenuBar, QProgressBar,
-    QPushButton, QSizePolicy, QStackedWidget, QStatusBar,
-    QVBoxLayout, QWidget)
+    QLabel, QMainWindow, QMenuBar, QPushButton,
+    QSizePolicy, QStackedWidget, QStatusBar, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -270,26 +270,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.frame_6)
 
         self.stackedWidget.addWidget(self.page)
-        self.page_4 = QWidget()
-        self.page_4.setObjectName(u"page_4")
-        self.verticalLayout_2 = QVBoxLayout(self.page_4)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.label = QLabel(self.page_4)
-        self.label.setObjectName(u"label")
-        sizePolicy1.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy1)
-        self.label.setFont(font)
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_2.addWidget(self.label)
-
-        self.progressBar = QProgressBar(self.page_4)
-        self.progressBar.setObjectName(u"progressBar")
-        self.progressBar.setValue(24)
-
-        self.verticalLayout_2.addWidget(self.progressBar)
-
-        self.stackedWidget.addWidget(self.page_4)
 
         self.verticalLayout_3.addWidget(self.stackedWidget)
 
@@ -324,6 +304,5 @@ class Ui_MainWindow(object):
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"T\u00e9rmino:", None))
         self.pushButton_cancel_date.setText(QCoreApplication.translate("MainWindow", u"Cancelar", None))
         self.pushButton_send_date.setText(QCoreApplication.translate("MainWindow", u"Enviar", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Recibos baixados:", None))
     # retranslateUi
 
