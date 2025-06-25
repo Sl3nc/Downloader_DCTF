@@ -24,7 +24,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     is_find_msg = 'Confirma ter alcançado a tela indicada pelas instrunções?'
     warning_auto = 'Uma operação automática irá iniciar, NÃO USE o mouse e teclado até que a próxima instrunção apareça'
     DATE_INDEX = 1
-    LOAD_INDEX = 2
     MAIN_INDEX = 0
 
     def __init__(self, parent = None) -> None:
@@ -50,7 +49,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_jump
         ]
 
-        self.pushButton_execute.clicked.connect(self.send)
+        self.current_connection =\
+            self.pushButton_execute.clicked.connect(self.send)
         self.pushButton_back.clicked.connect(lambda: self.send(1))
         self.pushButton_jump.clicked.connect(lambda: self.send(2))
 
@@ -68,7 +68,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         if self.step.is_execution_time(): self.execute()
 
-    def reset(self):
+    def reset(self, in_operation = False):
+        if in_operation:
+            self.disable_bttns()
+            self.switch_execute()
+
         self.worker = None
         self.step.start()
         self.send()
@@ -110,7 +114,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def cancel_date(self):
         self.reset()
-        self.disable_bttns()
+        self.stackedWidget.setCurrentIndex(self.MAIN_INDEX)
         showwarning(title='Aviso', message='Operação cancelada')
         
     def to_continue(self):
@@ -133,16 +137,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._thread.started.connect(self.worker.execute)
         self.worker.end.connect(self._thread.quit)
         self.worker.end.connect(self._thread.deleteLater)
-        self.worker.start.connect(self.disable_bttns)
+        self.worker.start.connect(self.start)
         self.worker.error.connect(self.error)
         self.worker.conclusion.connect(self.conclusion)
         self.worker.can_continue.connect(self.to_continue)
         # self._thread.finished.connect(self.worker.deleteLater)
         self._thread.start()
+
+    def start(self):
+        self.disable_bttns()
+        self.pushButton_execute.disconnect(self.current_connection)
+        self.current_connection =\
+            self.pushButton_execute.clicked.connect(self.cancel)
+        self.pushButton_execute.setDisabled(False)
     
     def conclusion(self, path):
-        self.reset()
-        self.disable_bttns()
+        self.reset(True)
         showinfo(title='Aviso', message= self.complete_msg)
         startfile(path)
 
@@ -150,6 +160,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         message, reset = result
         self.reset(reset)
         showwarning(title='Aviso', message= message)
+
+    def switch_execute(self):
+        self.pushButton_execute.disconnect(self.current_connection)
+        self.current_connection =\
+            self.pushButton_execute.clicked.connect(self.send)
+        
+    def cancel(self):
+        self.cancel_msg = 'A operação está prestes a ser cancelada, espere até o momento oportuno'
+        self.label_instruction.setText(self.cancel_msg)
+        self.pushButton_execute.setDisabled(True)
+        self.worker.stop()
 
 if __name__ == '__main__':
     # Inicializa a aplicação Qt.

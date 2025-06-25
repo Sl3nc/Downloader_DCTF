@@ -16,6 +16,7 @@ class Browser:
     ECAC_URL = 'https://cav.receita.fazenda.gov.br/autenticacao'
     next_arrow_path = (Path(__file__).parent / 'imgs' / 'next_arrow.png').__str__()
     recibo_path = (Path(__file__).parent / 'imgs' / 'recibo.png').__str__()
+    can_execute = True
 
     def __init__(self, path: str):
         useImageNotFoundException(False)
@@ -27,7 +28,7 @@ class Browser:
         sleep(1)
 
         self.reposite_window()
-        
+
         self.__enter_config()
 
         # displayMousePosition()
@@ -101,7 +102,7 @@ class Browser:
     def _download(self):
         arrow_pos = 0
 
-        while arrow_pos != None :
+        while arrow_pos != None and self.can_execute:
             scroll(-500)
             sleep(0.5)
 
@@ -131,3 +132,5 @@ class Browser:
     def is_alive(self): 
         # get()
         ...
+
+    def cancel(self): self.can_execute = False

@@ -40,8 +40,8 @@
         "func": true
     },
     {
-        "message": "A operação que está ocorrendo demora em média 13 minutos para acabar, NÃO USE o teclado ou mouse nesse período, avisarei quando acabar ;)",
-        "label": "Executar",
+        "message": "A operação que está ocorrendo demora em média 13 minutos para acabar\nNÃO USE o teclado ou mouse nesse período, avisarei quando acabar ;)",
+        "label": "Cancelar",
         "func": false
     }
 ]

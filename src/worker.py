@@ -22,22 +22,22 @@ class Worker(QObject):
 
     def execute(self):
         try:
-            browser = Browser(self.download_path)
+            self.browser = Browser(self.download_path)
 
             self.can_continue.emit()
-            self._wait_confirm(browser)
+            self._wait_confirm(self.browser)
 
-            browser.ecac()
-            self._wait_confirm(browser)
+            self.browser.ecac()
+            self._wait_confirm(self.browser)
 
             self.start.emit()
-            browser.download_files(self.start_date, self.end_date)
-            browser.chrome_reset()
-            browser.close()
+            self.browser.download_files(self.start_date, self.end_date)
+            self.browser.chrome_reset()
+            self.browser.close()
             # self.can_continue.emit()
             self.conclusion.emit(self.download_path)
         except Exception as err:
-            browser.close()
+            self.browser.close()
             in_execution = True if self.ready else False
             self.error.emit([err, in_execution])
         finally:
@@ -49,5 +49,6 @@ class Worker(QObject):
             sleep(self.wait_sec)
         self.ready = False
 
-    def confirm(self): 
-        self.ready = True
+    def confirm(self): self.ready = True
+
+    def stop(self): self.browser.cancel()
