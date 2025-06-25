@@ -2,9 +2,11 @@ from webbrowser import open, get, open_new_tab, open_new, Chrome
 from pyautogui import (
     hotkey, displayMousePosition, scroll, click, typewrite, press,
     locateAllOnScreen, locateOnScreen, useImageNotFoundException,
+    size
 )
 from time import sleep
 from pathlib import Path
+from pygetwindow import getWindowsWithTitle
 
 class Browser:
     """
@@ -23,6 +25,9 @@ class Browser:
     def chrome_config(self, path: str):
         open('https://www.google.com/')
         sleep(1)
+
+        self.reposite_window()
+        
         self.__enter_config()
 
         # displayMousePosition()
@@ -30,6 +35,14 @@ class Browser:
         hotkey('ctrl', 'c')
 
         self.__entry_download_path(lambda: typewrite(path.replace('/','\\')))
+
+    def reposite_window(self):
+        chrome = getWindowsWithTitle('Google - Google Chrome')[0]
+        window_x = chrome.left + 8
+        screen_x = size()[0]
+
+        if screen_x <= window_x : chrome.moveTo(-8, -8)
+        if chrome.isMaximized == False: chrome.maximize()
 
     def chrome_reset(self):
         self.__enter_config()
