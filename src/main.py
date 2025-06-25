@@ -102,6 +102,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.reset()
             self.disable_bttns()
             showwarning(title='Aviso', message=err)
+        finally:
+            self.stackedWidget.setCurrentIndex(self.MAIN_INDEX)
 
     def request_path(self):
         self.disable_bttns()
@@ -122,12 +124,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         state = True if self.pushButton_execute.isEnabled() else False
         for i in self.to_disable: i.setDisabled(state)
 
-
     def open(self, path):
         self.worker = Worker(
             path,
-            self.dateEdit.text(),
-            self.dateEdit_2.text()
+            self.dateEdit_2.text(),
+            self.dateEdit_end.text()
         )
         self._thread = QThread()
 

@@ -35,7 +35,7 @@ class Browser:
 
     def download_files(self, start_date: str, end_date: str):
         hotkey('alt', 'tab')
-        self._filters()
+        self._filters(start_date, end_date)
         self._download()
         sleep(2)
 
@@ -46,10 +46,14 @@ class Browser:
         click(26, 391)
         sleep(5)
 
-        displayMousePosition()
+        # displayMousePosition()
         #Período
         click(47, 479, 3)
         typewrite(start_date)
+        press('enter')
+        
+        click(150, 479, 3)
+        typewrite(end_date)
         press('enter')
         sleep(2)
 
@@ -60,7 +64,7 @@ class Browser:
 
         #Botão de pesquisa
         click(582, 579)
-        sleep(2)
+        sleep(5)
         
         #Recibo
         moveTo(1264, 700)
