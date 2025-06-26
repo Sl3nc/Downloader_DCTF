@@ -43,7 +43,7 @@ class Step:
     
     def is_execution_time(self):
         func  = self.instructions[self.value][self.func_index]
-        return True if func == True and self.value > self.max_value else False
+        return True if func == True and self.value >= self.max_value else False
 
     def _data(self, value):
         data = self.instructions[value]

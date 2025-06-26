@@ -30,7 +30,6 @@ class Worker(QObject):
             self.can_continue.emit()
             self._wait_confirm(self.browser)
 
-            self.can_continue.emit()
             self.start.emit()
             self.browser.download_files(self.start_date, self.end_date)
             self.browser.chrome_reset()

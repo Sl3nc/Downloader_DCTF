@@ -20,8 +20,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     step = Step()
     worker = None
     complete_msg = 'Todos arquivos DCTF WEB foram baixados com êxito, a pasta que destinou o download será aberta após o "ok"'
-    no_find_msg = 'Retrosseda os passos até alcançar a tela indicada, caso a dificuldade persista, consulte os responsáveis'
-    is_find_msg = 'Confirma ter alcançado a tela indicada pelas instrunções?'
+    back_msg = 'Retrosseda os passos até alcançar a tela indicada, caso a dificuldade persista, consulte os responsáveis'
+    is_ready_msg = 'Confirma ter alcançado a tela indicada pelas instrunções?'
     warning_auto = 'Uma operação automática irá iniciar, NÃO USE o mouse e teclado até que a próxima instrunção apareça'
     DATE_INDEX = 1
     MAIN_INDEX = 0
@@ -82,11 +82,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.stackedWidget.setCurrentIndex(self.DATE_INDEX)
         else:
             self.disable_bttns()
-            if askyesno('Aviso', self.is_find_msg):
+            if askyesno('Aviso', self.is_ready_msg):
                 showwarning('CUIDADO', self.warning_auto)
                 self.worker.confirm()
             else:
-                showinfo('Aviso', self.no_find_msg)
+                showinfo('Aviso', self.back_msg)
                 self.send(1)
                 self.disable_bttns()
     
@@ -146,6 +146,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._thread.start()
 
     def start(self):
+        self.send()
         self.pushButton_execute.disconnect(self.current_connection)
         self.current_connection =\
             self.pushButton_execute.clicked.connect(self.cancel)
@@ -167,8 +168,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_execute.clicked.connect(self.send)
         
     def cancel(self):
-        self.cancel_msg = 'A operação está prestes a ser cancelada, espere até o momento oportuno'
-        self.label_instruction.setText(self.cancel_msg)
+        self.send()
+        # self.label_instruction.setText(self.cancel_msg)
         self.pushButton_execute.setDisabled(True)
         self.worker.stop()
 

@@ -29,7 +29,7 @@ class Browser:
 
         self.reposite_window()
 
-        self.__enter_url()
+        self.__enter_url(self.DOWNLOAD_URL)
 
         # displayMousePosition()
         click(400, 250, 3)

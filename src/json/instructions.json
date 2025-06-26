@@ -43,5 +43,10 @@
         "message": "A operação que está ocorrendo demora em média 13 minutos para acabar\nNÃO USE o teclado ou mouse nesse período, avisarei quando acabar ;)",
         "label": "Cancelar",
         "func": false
+    },
+    {
+        "message": "A operação está prestes a ser cancelada, espere até o momento oportuno\nCONTINUE SEM USAR o teclado e mouse até receber outro aviso",
+        "label": "Cancelado",
+        "func": false
     }
 ]
