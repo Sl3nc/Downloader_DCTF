@@ -12,6 +12,7 @@ class Worker(QObject):
     progress_bar = Signal(int)
     can_continue = Signal()
     session_err_msg = 'O navegador a ser usado foi fechado, o procedimento será reiniciado.. favor não fechar o navegador'
+    is_started = False
 
     def __init__(self, download_path: str, start_date: str, end_date: str) -> None:
         super().__init__()
@@ -31,6 +32,7 @@ class Worker(QObject):
             self._wait_confirm(self.browser)
 
             self.start.emit()
+            self.is_started = True
             self.browser.download_files(self.start_date, self.end_date)
             self.browser.chrome_reset()
             self.browser.close()
@@ -38,8 +40,7 @@ class Worker(QObject):
             self.conclusion.emit(self.download_path)
         except Exception as err:
             self.browser.close()
-            in_execution = True if self.ready else False
-            self.error.emit([err, in_execution])
+            self.error.emit([err, self.is_started])
         finally:
             self.end.emit()
 

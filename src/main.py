@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (
-    QMainWindow, QApplication, QCheckBox, QTreeWidgetItem, QPushButton, QHBoxLayout, QFrame, QSizePolicy
+    QMainWindow, QApplication, QCheckBox, QTreeWidgetItem, QPushButton, QHBoxLayout, QFrame, QSizePolicy, QToolBar
 )
-from PySide6.QtGui import QPixmap, QIcon, QMovie
+from PySide6.QtGui import QPixmap, QIcon, QMovie, QAction
 from tkinter.filedialog import askdirectory
 from tkinter.messagebox import showwarning, showinfo, askyesno
 from window_downloader_dctf import Ui_MainWindow
@@ -32,6 +32,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         super().__init__(parent)
         self.setupUi(self)
+
+        menu = self.menuBar()
+        reset_menu = menu.addMenu('&Funções Extra')
+
+        new_action = QAction("Reiniciar", self)
+        new_action.triggered.connect(self.reset)
+        reset_menu.addAction(new_action)
 
         now = datetime.now()
         self.dateEdit_end.setDate(now)
@@ -68,12 +75,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         if self.step.is_execution_time(): self.execute()
 
-    def reset(self, in_operation = False):
-        if in_operation:
-            self.disable_bttns()
-            self.switch_execute()
+    def reset(self):
+        if self.worker != None:
+            self._thread.quit()
+            self._thread.deleteLater()
+            # self._thread.exit()
+            # self.worker.deleteLater()
+            self.worker = None
+            # self.disable_bttns()
 
-        self.worker = None
+        self.stackedWidget.setCurrentIndex(self.MAIN_INDEX)
         self.step.start()
         self.send()
 
@@ -153,13 +164,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_execute.setDisabled(False)
     
     def conclusion(self, path):
-        self.reset(True)
+        self.switch_execute()
+        self.reset()
         showinfo(title='Aviso', message= self.complete_msg)
         startfile(path)
 
     def error(self, result: list[str, bool]):
         message, reset = result
-        self.reset(reset)
+        if reset: self.switch_execute()
+        self.reset()
         showwarning(title='Aviso', message= message)
 
     def switch_execute(self):
@@ -169,7 +182,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
     def cancel(self):
         self.send()
-        # self.label_instruction.setText(self.cancel_msg)
         self.pushButton_execute.setDisabled(True)
         self.worker.stop()
 

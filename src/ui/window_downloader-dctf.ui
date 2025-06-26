@@ -10,6 +10,12 @@
     <height>348</height>
    </rect>
   </property>
+  <property name="maximumSize">
+   <size>
+    <width>500</width>
+    <height>348</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Downloader DCTF WEB</string>
   </property>
