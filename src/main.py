@@ -77,11 +77,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def reset(self):
         if self.worker != None:
-            self._thread.quit()
-            self._thread.deleteLater()
+            # self._thread.quit()
+            # self._thread.deleteLater()
+            
             # self._thread.exit()
             # self.worker.deleteLater()
+            self.worker.stop()
             self.worker = None
+
             # self.disable_bttns()
 
         self.stackedWidget.setCurrentIndex(self.MAIN_INDEX)

@@ -13,6 +13,7 @@ class Worker(QObject):
     can_continue = Signal()
     session_err_msg = 'O navegador a ser usado foi fechado, o procedimento será reiniciado.. favor não fechar o navegador'
     is_started = False
+    is_canceled = False
 
     def __init__(self, download_path: str, start_date: str, end_date: str) -> None:
         super().__init__()
@@ -26,10 +27,12 @@ class Worker(QObject):
             self.browser = Browser(self.download_path)
             self.can_continue.emit()
             self._wait_confirm(self.browser)
+            if self.is_canceled: return self.end.emit()
 
             self.browser.ecac()
             self.can_continue.emit()
             self._wait_confirm(self.browser)
+            if self.is_canceled: return self.end.emit()
 
             self.start.emit()
             self.is_started = True
@@ -45,11 +48,15 @@ class Worker(QObject):
             self.end.emit()
 
     def _wait_confirm(self, ecac: Browser):
-        while self.ready == False:
+        while self.ready == False and self.is_canceled == False:
             ecac.is_alive()
             sleep(self.wait_sec)
         self.ready = False
 
     def confirm(self): self.ready = True
 
-    def stop(self): self.browser.cancel()
+    def stop(self): 
+        if self.is_started:
+            self.browser.cancel()
+        else:
+            self.is_canceled = True
