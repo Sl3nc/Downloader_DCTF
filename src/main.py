@@ -12,6 +12,7 @@ from os import startfile
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+from pathlib import Path
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -25,6 +26,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     warning_auto = 'Uma operação automática irá iniciar, NÃO USE o mouse e teclado até que a próxima instrunção apareça'
     DATE_INDEX = 1
     MAIN_INDEX = 0
+    ico_path = Path(__file__).parent / 'imgs' / 'icon_downloader.ico'
 
     def __init__(self, parent = None) -> None:
         """
@@ -32,6 +34,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         super().__init__(parent)
         self.setupUi(self)
+
+        self.setWindowIcon(QIcon(self.ico_path.__str__()))
 
         menu = self.menuBar()
         reset_menu = menu.addMenu('&Funções Extra')
