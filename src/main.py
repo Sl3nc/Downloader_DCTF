@@ -172,6 +172,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def conclusion(self, path):
         self.switch_execute()
+        self.disable_bttns()
         self.reset()
         showinfo(title='Aviso', message= self.complete_msg)
         startfile(path)
