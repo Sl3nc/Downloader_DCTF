@@ -3,6 +3,11 @@ from browser import Browser
 from time import sleep
 
 class Worker(QObject):
+    """
+    Worker responsável por executar o processo de download dos arquivos DCTF em uma thread separada.
+
+    Gerencia o ciclo de execução, sinais de progresso, controle de cancelamento e tratamento de erros.
+    """
     wait_sec = 2
     ready = False
     end = Signal()
@@ -16,6 +21,9 @@ class Worker(QObject):
     is_canceled = False
 
     def __init__(self, download_path: str, start_date: str, end_date: str) -> None:
+        """
+        Inicializa o worker com o caminho de download e intervalo de datas.
+        """
         super().__init__()
         self.download_path = download_path
         self.start_date = start_date
@@ -23,6 +31,9 @@ class Worker(QObject):
         pass
 
     def execute(self):
+        """
+        Executa o fluxo principal de download, emitindo sinais conforme o progresso.
+        """
         try:
             self.browser = Browser(self.download_path)
             self.can_continue.emit()
@@ -48,14 +59,24 @@ class Worker(QObject):
             self.end.emit()
 
     def _wait_confirm(self, ecac: Browser):
+        """
+        Aguarda confirmação do usuário para prosseguir, verificando se o processo foi cancelado.
+        """
         while self.ready == False and self.is_canceled == False:
             ecac.is_alive()
             sleep(self.wait_sec)
         self.ready = False
 
-    def confirm(self): self.ready = True
+    def confirm(self): 
+        """
+        Sinaliza que o usuário confirmou a etapa atual.
+        """
+        self.ready = True
 
     def stop(self): 
+        """
+        Cancela a execução do worker.
+        """
         if self.is_started:
             self.browser.cancel()
         else:

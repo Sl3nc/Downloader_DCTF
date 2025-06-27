@@ -13,6 +13,8 @@ from screen import Screen
 class Browser:
     """
     Classe responsável por automatizar o acesso ao sistema Acessorias.com para buscar e-mails de contato das empresas.
+
+    Utiliza automação de navegador e manipulação de tela para configurar o Chrome, acessar o ECAC e realizar downloads automáticos.
     """
     DOWNLOAD_URL = 'chrome://settings/downloads'
     ECAC_URL = 'https://cav.receita.fazenda.gov.br/autenticacao'
@@ -29,6 +31,9 @@ class Browser:
     extra_download_y = 40
 
     def __init__(self, path: str):
+        """
+        Inicializa o navegador Chrome e configura o diretório de download.
+        """
         self.screen = Screen()
         self.extra_download = [
             self.current_download_pos,
@@ -42,6 +47,9 @@ class Browser:
         pass
 
     def chrome_config(self, path: str):
+        """
+        Abre o Chrome, acessa as configurações de download e define o diretório de download.
+        """
         self.controller.open('https://www.google.com/')
         sleep(2)
 
@@ -60,10 +68,16 @@ class Browser:
         self.__entry_download_path(lambda: typewrite(path.replace('/','\\'))) 
 
     def chrome_reset(self):
+        """
+        Fecha a aba de configurações e restaura o diretório de download anterior.
+        """
         hotkey('ctrl', 'w')
         self.__entry_download_path(lambda: hotkey('ctrl', 'v'))
 
     def __entry_download_path(self, func):
+        """
+        Realiza a entrada do caminho de download na interface do Chrome.
+        """
         click(self.change_download_pos)
         sleep(1)
         func()
@@ -73,9 +87,15 @@ class Browser:
         sleep(1)
 
     def ecac(self):
+        """
+        Abre uma nova aba no Chrome com a página do ECAC.
+        """
         self.controller.open_new_tab(self.ECAC_URL)
         
     def __enter_url(self, url):
+        """
+        Digita uma URL na barra de endereços do Chrome.
+        """
         click(575, 63)
         typewrite(url)
         sleep(0.5)
@@ -83,6 +103,9 @@ class Browser:
         sleep(2)
 
     def download_files(self, start_date: str, end_date: str):
+        """
+        Realiza o download dos arquivos DCTF para o intervalo de datas informado.
+        """
         hotkey('alt', 'tab')
         self._filters(start_date, end_date)
         sleep(5)
@@ -90,6 +113,9 @@ class Browser:
         sleep(2)
 
     def _filters(self, start_date: str, end_date: str):
+        """
+        Preenche os filtros de pesquisa no ECAC.
+        """
         ref = {
             47: lambda: typewrite(start_date),
             157: lambda: typewrite(end_date),
@@ -116,6 +142,9 @@ class Browser:
         click(582, 579)
 
     def _download(self):
+        """
+        Realiza o download dos arquivos encontrados, navegando entre páginas de resultados.
+        """
         arrow_pos = 0
 
         while arrow_pos != None and self.can_execute:
@@ -141,13 +170,20 @@ class Browser:
         
     def close(self):
         """
-        Fecha a aba do ECAC.
+        Fecha a aba e restaura as configurações de tela.
         """
         # hotkey('ctrl', 'w')
         self.screen.reset()
 
     def is_alive(self): 
+        """
+        Método placeholder para verificar se o navegador está ativo.
+        """
         # get()
         ...
 
-    def cancel(self): self.can_execute = False
+    def cancel(self): 
+        """
+        Cancela a execução do download.
+        """
+        self.can_execute = False

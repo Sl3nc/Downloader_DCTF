@@ -17,6 +17,9 @@ from pathlib import Path
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
     Classe principal da interface gráfica do sistema, responsável por interagir com o usuário e orquestrar as operações.
+
+    Esta classe gerencia a navegação entre telas, coleta de dados do usuário, inicialização e controle do worker de download,
+    além de exibir mensagens e controlar o fluxo da aplicação.
     """
     step = Step()
     worker = None
@@ -71,6 +74,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.reset()
 
     def send(self, value = 0):
+        """
+        Atualiza a interface com a próxima instrução ou executa a ação correspondente.
+        """
         func = self.ref[value]
         label, instruction = func()
         
@@ -80,6 +86,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.step.is_execution_time(): self.execute()
 
     def reset(self):
+        """
+        Reinicia o fluxo da aplicação, resetando o worker e a navegação.
+        """
         if self.worker != None:
             self.worker.stop()
             self.worker = None
@@ -91,6 +100,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.send()
 
     def execute(self):
+        """
+        Inicia o processo de download, alternando para a tela de datas ou aguardando confirmação do usuário.
+        """
         if self.worker == None:
             self.stackedWidget.setCurrentIndex(self.DATE_INDEX)
         else:
@@ -104,6 +116,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.disable_bttns()
     
     def request_date(self):
+        """
+        Solicita as datas de início e fim do usuário e o diretório de download.
+        """
         try:
             date_start = date(*self.dateEdit_2.date().getDate())
             date_end = date(*self.dateEdit_end.date().getDate())
@@ -121,25 +136,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.stackedWidget.setCurrentIndex(self.MAIN_INDEX)
 
     def request_path(self):
+        """
+        Abre um diálogo para o usuário selecionar o diretório de download.
+        """
         self.disable_bttns()
         path = askdirectory()
         if path == '': raise Exception('Operação cancelada')
         return path
 
     def cancel_date(self):
+        """
+        Cancela a seleção de datas e retorna à tela principal.
+        """
         self.reset()
         self.stackedWidget.setCurrentIndex(self.MAIN_INDEX)
         showwarning(title='Aviso', message='Operação cancelada')
         
     def to_continue(self):
+        """
+        Avança para a próxima instrução e desabilita os botões.
+        """
         self.send()
         self.disable_bttns()
 
     def disable_bttns(self):
+        """
+        Habilita ou desabilita os botões de navegação conforme o estado atual.
+        """
         state = True if self.pushButton_execute.isEnabled() else False
         for i in self.to_disable: i.setDisabled(state)
 
     def open(self, path):
+        """
+        Inicializa o worker e a thread para realizar o download dos arquivos.
+        """
         self.worker = Worker(
             path,
             self.dateEdit_2.text(),
@@ -159,6 +189,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._thread.start()
 
     def start(self):
+        """
+        Atualiza a interface para o estado de execução e conecta o botão de execução ao cancelamento.
+        """
         self.send()
         self.pushButton_execute.disconnect(self.current_connection)
         self.current_connection =\
@@ -166,6 +199,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_execute.setDisabled(False)
     
     def conclusion(self, path):
+        """
+        Exibe mensagem de conclusão e abre o diretório de download.
+        """
         self.switch_execute()
         self.disable_bttns()
         self.reset()
@@ -173,17 +209,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         startfile(path)
 
     def error(self, result: list[str, bool]):
+        """
+        Exibe mensagem de erro e reinicia o fluxo.
+        """
         message, reset = result
         if reset: self.switch_execute()
         self.reset()
         showwarning(title='Aviso', message= message)
 
     def switch_execute(self):
+        """
+        Alterna a conexão do botão de execução entre enviar e cancelar.
+        """
         self.pushButton_execute.disconnect(self.current_connection)
         self.current_connection =\
             self.pushButton_execute.clicked.connect(self.send)
         
     def cancel(self):
+        """
+        Cancela a operação em andamento.
+        """
         self.send()
         self.pushButton_execute.setDisabled(True)
         self.worker.stop()
