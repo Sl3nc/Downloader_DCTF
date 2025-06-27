@@ -26,7 +26,7 @@ class Browser:
     
     current_download_pos = [400, 250]
     change_download_pos = [998, 235]
-    extra_download_y = 30
+    extra_download_y = 40
 
     def __init__(self, path: str):
         self.screen = Screen()
@@ -78,6 +78,7 @@ class Browser:
     def __enter_url(self, url):
         click(575, 63)
         typewrite(url)
+        sleep(0.5)
         press('enter')
         sleep(2)
 
